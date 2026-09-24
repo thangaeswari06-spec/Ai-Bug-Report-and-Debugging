@@ -22,11 +22,12 @@ services:
       - key: CORS_ORIGINS
         sync: false      # e.g. https://ai-bugfixer-frontend.onrender.com or your Vercel URL
 
-  - type: static
+  - type: web
     name: ai-bugfixer-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    staticPublishPath: ./dist
     routes:
       - type: rewrite
         source: /*
