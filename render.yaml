@@ -1,0 +1,22 @@
+# One-click backend deploy on Render: https://render.com
+# Dashboard -> New -> Blueprint -> point at this repo -> Render reads this file.
+# After it deploys, copy the service URL into frontend/.env.production as VITE_API_URL.
+services:
+  - type: web
+    name: ai-bugfixer-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: LLM_BACKEND
+        value: api
+      - key: LLM_API_URL
+        sync: false      # set manually in Render dashboard
+      - key: LLM_API_KEY
+        sync: false      # set manually in Render dashboard, keep secret
+      - key: LLM_API_MODEL
+        value: gpt-4o-mini
+      - key: CORS_ORIGINS
+        sync: false      # set to your Vercel frontend URL, e.g. https://your-app.vercel.app
