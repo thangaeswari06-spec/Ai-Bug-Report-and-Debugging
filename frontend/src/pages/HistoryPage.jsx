@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Trash2, ChevronDown, Loader2, History as HistoryIcon, MapPin } from "lucide-react";
+import { Trash2, ChevronDown, History as HistoryIcon, MapPin } from "lucide-react";
 import { fetchHistory, clearHistory, deleteHistoryItem, errorMessage } from "../services/api";
 import SeverityBadge from "../components/SeverityBadge";
 import ResultCard from "../components/ResultCard";

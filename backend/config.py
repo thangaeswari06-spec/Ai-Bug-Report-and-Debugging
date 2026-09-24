@@ -15,6 +15,33 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_DIR, exist_ok=True)
 
+
+def _load_env_file():
+    """Load variables from .env file into os.environ if not already set."""
+    candidates = [
+        os.path.join(BASE_DIR, ".env"),
+        os.path.join(os.getcwd(), ".env"),
+    ]
+    for p in candidates:
+        if os.path.isfile(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line or line.startswith("#") or "=" not in line:
+                            continue
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'\"")
+                        if k and k not in os.environ:
+                            os.environ[k] = v
+                break
+            except Exception:
+                pass
+
+
+_load_env_file()
+
 DB_PATH = os.environ.get("BUGFIXER_DB", os.path.join(DATA_DIR, "bugfixer.db"))
 
 

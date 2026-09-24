@@ -66,3 +66,12 @@ def languages():
 @app.get("/health", tags=["meta"])
 def health_check():
     return {"status": "ok"}
+
+
+# Mount built static frontend if available (supports single-container full-stack deployment)
+import os
+from fastapi.staticfiles import StaticFiles
+
+_frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+if os.path.isdir(_frontend_dist):
+    app.mount("/", StaticFiles(directory=_frontend_dist, html=True), name="frontend")

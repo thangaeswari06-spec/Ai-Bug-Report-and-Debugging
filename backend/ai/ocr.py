@@ -13,12 +13,17 @@ which Tesseract reads poorly - so we detect that and invert the image first.
 """
 
 import io
+import os
 import re
+import shutil
 
 from PIL import Image, ImageOps, ImageStat, UnidentifiedImageError
 
 try:
     import pytesseract
+    win_tess = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    if not shutil.which("tesseract") and os.path.exists(win_tess):
+        pytesseract.pytesseract.tesseract_cmd = win_tess
 except ImportError:  # handled at call time with a friendly message
     pytesseract = None
 
@@ -71,8 +76,6 @@ def guess_language(text: str) -> str | None:
 
 
 def extract_text(raw: bytes) -> dict:
-    if pytesseract is None:
-        raise OCRUnavailable("pytesseract is not installed. Run: pip install pytesseract")
     try:
         img = Image.open(io.BytesIO(raw))
         if img.format not in ("PNG", "JPEG", "WEBP"):
@@ -82,6 +85,9 @@ def extract_text(raw: bytes) -> dict:
         raise
     except (UnidentifiedImageError, Exception):
         raise BadImage("That file is not a valid image.")
+
+    if pytesseract is None:
+        raise OCRUnavailable("pytesseract is not installed. Run: pip install pytesseract")
 
     try:
         text = pytesseract.image_to_string(_prepare(img), config="--psm 6")

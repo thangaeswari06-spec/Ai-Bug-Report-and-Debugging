@@ -25,7 +25,7 @@ IS_POSIX = os.name == "posix"
 
 # language -> (source filename, executables that must exist)
 _SPEC = {
-    "python": ("main.py", ["python3"]),
+    "python": ("main.py", [sys.executable or "python"]),
     "javascript": ("main.js", ["node"]),
     "typescript": ("main.ts", ["node"]),
     "java": ("Main.java", ["javac", "java"]),
@@ -54,6 +54,8 @@ def _node_supports_ts() -> bool:
 def is_available(language: str) -> bool:
     if language not in _SPEC:
         return False
+    if language == "python":
+        return bool(sys.executable or shutil.which("python3") or shutil.which("python"))
     if language == "csharp":
         return bool(shutil.which("dotnet") or (shutil.which("mcs") and shutil.which("mono")))
     if language == "typescript":
@@ -120,7 +122,8 @@ def _prepare(language: str, code: str, workdir: str):
         return None
 
     if language == "python":
-        return ["python3", filename], None
+        py_bin = sys.executable or shutil.which("python3") or "python"
+        return [py_bin, filename], None
     if language == "javascript":
         return ["node", filename], None
     if language == "typescript":

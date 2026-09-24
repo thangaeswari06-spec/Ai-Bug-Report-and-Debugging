@@ -7,7 +7,11 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [booting, setBooting] = useState(true);
-  const [config, setConfig] = useState({ google_enabled: false, google_client_id: null });
+  const envGoogleId = import.meta.env.VITE_GOOGLE_CLIENT_ID || null;
+  const [config, setConfig] = useState({
+    google_enabled: Boolean(envGoogleId),
+    google_client_id: envGoogleId,
+  });
 
   const logout = useCallback(() => {
     localStorage.removeItem(api.TOKEN_KEY);
@@ -17,13 +21,21 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     api.setUnauthorizedHandler(logout);
     (async () => {
-      try { setConfig(await api.getAuthConfig()); } catch { /* backend offline - login page will say so */ }
+      try {
+        const serverConfig = await api.getAuthConfig();
+        setConfig({
+          google_enabled: Boolean(serverConfig.google_enabled || envGoogleId),
+          google_client_id: serverConfig.google_client_id || envGoogleId,
+        });
+      } catch {
+        /* backend offline - login page will say so */
+      }
       if (localStorage.getItem(api.TOKEN_KEY)) {
         try { setUser(await api.fetchMe()); } catch { localStorage.removeItem(api.TOKEN_KEY); }
       }
       setBooting(false);
     })();
-  }, [logout]);
+  }, [logout, envGoogleId]);
 
   // Apply the user's accent colour to the whole app.
   useEffect(() => {

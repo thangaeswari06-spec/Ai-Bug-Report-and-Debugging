@@ -79,9 +79,17 @@ def test_unknown_email_same_message_as_wrong_password(alice):
     assert a.status_code == b.status_code == 401 and a.json() == b.json()
 
 
-def test_google_not_configured():
+def test_google_not_configured(monkeypatch):
+    monkeypatch.setattr("backend.routes.auth.GOOGLE_CLIENT_ID", "")
     assert client.get("/auth/config").json()["google_enabled"] is False
     assert client.post("/auth/google", json={"credential": "x" * 40}).status_code == 503
+
+
+def test_google_configured(monkeypatch):
+    monkeypatch.setattr("backend.routes.auth.GOOGLE_CLIENT_ID", "test-client-id.apps.googleusercontent.com")
+    cfg = client.get("/auth/config").json()
+    assert cfg["google_enabled"] is True
+    assert cfg["google_client_id"] == "test-client-id.apps.googleusercontent.com"
 
 
 def test_change_password(alice):
@@ -178,6 +186,12 @@ def test_notifications(bob):
 # -------------------------------------------------------------------- OCR
 def test_ocr_reads_dark_screenshot(alice):
     token = alice[0]
+    import shutil
+    from backend.ai.ocr import pytesseract
+    tess_cmd = getattr(pytesseract, "pytesseract", None) and getattr(pytesseract.pytesseract, "tesseract_cmd", None)
+    has_tess = pytesseract is not None and (shutil.which("tesseract") or (tess_cmd and os.path.exists(tess_cmd)) or os.path.exists(r"C:\Program Files\Tesseract-OCR\tesseract.exe"))
+    if not has_tess:
+        pytest.skip("Tesseract OCR engine is not installed on this machine (installed in Docker/production container).")
     from PIL import ImageFont
     import glob
     fonts = glob.glob("/usr/share/fonts/**/*Mono*.ttf", recursive=True)
@@ -259,8 +273,12 @@ def test_timeout_and_compile_error(bob):
     token = bob[0]
     r = client.post("/practice/run", headers=H(token), json={"problem_id": "sum-two", "language": "python", "code": "while True: pass"}).json()
     assert r["results"][0]["status"] == "timeout"
-    r = client.post("/practice/run", headers=H(token), json={"problem_id": "sum-two", "language": "c", "code": "int main( {"}).json()
-    assert r["status"] == "compile_error" and "error" in r["message"]
+    if available_languages().get("c"):
+        r = client.post("/practice/run", headers=H(token), json={"problem_id": "sum-two", "language": "c", "code": "int main( {"}).json()
+        assert r["status"] == "compile_error" and "error" in r["message"]
+    else:
+        r = client.post("/practice/run", headers=H(token), json={"problem_id": "sum-two", "language": "c", "code": "int main( {"})
+        assert r.status_code == 503
 
 
 def test_progress_and_solve_notification(alice):

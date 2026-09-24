@@ -27,6 +27,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 
 from backend.utils.languages import normalize_language
@@ -82,8 +83,9 @@ def _validate_python(code, expected_output=None, test_input=None):
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
         f.write(code)
         tmp = f.name
+    py_bin = sys.executable or shutil.which("python3") or "python"
     try:
-        proc = subprocess.run(["python3", tmp], input=test_input or "", capture_output=True, text=True, timeout=5)
+        proc = subprocess.run([py_bin, tmp], input=test_input or "", capture_output=True, text=True, timeout=5)
         if proc.returncode != 0:
             return _result(False, "execution", f"Runtime error: {proc.stderr.strip()[:500]}")
         actual = proc.stdout.strip()
@@ -153,9 +155,36 @@ def _validate_typescript(code):
     return _with_tempfile(code, ".ts", go)
 
 
+def _fallback_c_syntax(code: str) -> dict | None:
+    lines = code.splitlines()
+    in_block = 0
+    for idx, raw in enumerate(lines):
+        line = raw.strip()
+        if "//" in line:
+            line = line.split("//")[0].strip()
+        if not line or line.startswith("#"):
+            continue
+        in_block += line.count("{") - line.count("}")
+        if in_block > 0:
+            if not line.endswith((";", "{", "}", ":", ",", "\\")):
+                if not re.match(r"^(if|else|for|while|switch|case|default|do)\b", line):
+                    next_idx = idx + 1
+                    while next_idx < len(lines) and not lines[next_idx].strip():
+                        next_idx += 1
+                    if next_idx < len(lines):
+                        nxt = lines[next_idx].strip()
+                        if not nxt.startswith((";", ",", ")", "}")):
+                            first_token = nxt.split()[0].rstrip(";({")
+                            return _result(False, "syntax", f"error: expected ';' before '{first_token}'", next_idx + 1)
+    return None
+
+
 def _validate_c(code):
-    return _check_with(code, ".c", lambda p, d: ["gcc", "-fsyntax-only", "-w", p], "gcc",
-                       [r"main\.c:(\d+):\d+: error"], "gcc")
+    res = _check_with(code, ".c", lambda p, d: ["gcc", "-fsyntax-only", "-w", p], "gcc",
+                      [r"main\.c:(\d+):\d+: error"], "gcc")
+    if res is None:
+        return _fallback_c_syntax(code)
+    return res
 
 
 def _validate_cpp(code):

@@ -1,6 +1,5 @@
-# One-click backend deploy on Render: https://render.com
-# Dashboard -> New -> Blueprint -> point at this repo -> Render reads this file.
-# After it deploys, copy the service URL into frontend/.env.production as VITE_API_URL.
+# Full-stack deploy on Render: https://render.com
+# Dashboard -> New -> Blueprint -> point at this repository -> Render reads this file.
 services:
   - type: web
     name: ai-bugfixer-backend
@@ -10,13 +9,33 @@ services:
     envVars:
       - key: SECRET_KEY
         generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false      # e.g. 636041592988-j9nnbqu7tq6iie847thmfvui3o8hgja2.apps.googleusercontent.com
       - key: LLM_BACKEND
-        value: api
+        value: mock      # change to 'api' if using OpenAI/Anthropic/custom API
       - key: LLM_API_URL
-        sync: false      # set manually in Render dashboard
+        sync: false      # optional: set if LLM_BACKEND is api
       - key: LLM_API_KEY
-        sync: false      # set manually in Render dashboard, keep secret
+        sync: false      # optional: set if LLM_BACKEND is api
       - key: LLM_API_MODEL
         value: gpt-4o-mini
       - key: CORS_ORIGINS
-        sync: false      # set to your Vercel frontend URL, e.g. https://your-app.vercel.app
+        sync: false      # e.g. https://ai-bugfixer-frontend.onrender.com or your Vercel URL
+
+  - type: static
+    name: ai-bugfixer-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: ai-bugfixer-backend
+          property: url
+      - key: VITE_GOOGLE_CLIENT_ID
+        sync: false      # e.g. 636041592988-j9nnbqu7tq6iie847thmfvui3o8hgja2.apps.googleusercontent.com

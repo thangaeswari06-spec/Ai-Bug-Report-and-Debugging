@@ -17,7 +17,10 @@ function strength(pw) {
 const STRENGTH_TEXT = ["", "Weak", "Fair", "Good", "Strong"];
 
 function GoogleButton({ config, onCredential, onError }) {
-  if (!config.google_enabled) {
+  const clientId = config?.google_client_id || import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const isEnabled = Boolean((config?.google_enabled || import.meta.env.VITE_GOOGLE_CLIENT_ID) && clientId);
+
+  if (!isEnabled || !clientId) {
     return (
       <div className="w-full">
         <button type="button" className="btn btn-ghost w-full" disabled title="Set GOOGLE_CLIENT_ID on the backend to enable this">
@@ -29,7 +32,7 @@ function GoogleButton({ config, onCredential, onError }) {
     );
   }
   return (
-    <GoogleOAuthProvider clientId={config.google_client_id}>
+    <GoogleOAuthProvider clientId={clientId}>
       <div className="flex justify-center">
         <GoogleLogin theme="filled_black" shape="pill" size="large" text="continue_with" width="320"
           onSuccess={(res) => onCredential(res.credential)} onError={() => onError("Google sign-in was cancelled or failed.")} />
