@@ -1,0 +1,856 @@
+id,language,code,error,stack_trace,bug_type,severity,root_cause,fix
+1,typescript,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+2,java,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+3,javascript,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+4,javascript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+5,java,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,MEDIUM,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+6,java,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,MEDIUM,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+7,javascript,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,HIGH,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+8,typescript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+9,python,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+10,typescript,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+11,javascript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,MEDIUM,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+12,python,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,HIGH,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+13,java,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+14,python,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+15,javascript,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,MEDIUM,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+16,javascript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+17,python,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+18,java,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+19,python,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+20,javascript,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+21,python,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+22,javascript,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+23,python,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+24,typescript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+25,python,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+26,java,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+27,typescript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,MEDIUM,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+28,typescript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,MEDIUM,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+29,java,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,MEDIUM,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+30,java,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+31,typescript,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+32,java,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+33,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+34,typescript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+35,java,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,MEDIUM,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+36,typescript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,MEDIUM,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+37,typescript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+38,typescript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+39,python,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+40,javascript,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+41,javascript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+42,java,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+43,typescript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+44,typescript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,MEDIUM,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+45,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,HIGH,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+46,typescript,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+47,typescript,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,MEDIUM,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+48,javascript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,MEDIUM,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+49,java,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,MEDIUM,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+50,java,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+51,python,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+52,java,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,LOW,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+53,python,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+54,java,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+55,python,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,HIGH,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+56,javascript,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+57,javascript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,HIGH,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+58,typescript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,MEDIUM,The react package is missing from node_modules.,Run: npm install react react-dom.
+59,java,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,HIGH,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+60,java,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+61,java,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+62,javascript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+63,typescript,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+64,java,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+65,python,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+66,java,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+67,javascript,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+68,java,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+69,python,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+70,python,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,MEDIUM,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+71,javascript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+72,javascript,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+73,java,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+74,typescript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+75,python,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+76,java,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,HIGH,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+77,python,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+78,python,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+79,typescript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,LOW,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+80,typescript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+81,javascript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,MEDIUM,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+82,javascript,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+83,typescript,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+84,python,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+85,typescript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,MEDIUM,The react package is missing from node_modules.,Run: npm install react react-dom.
+86,python,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+87,javascript,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+88,typescript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,HIGH,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+89,javascript,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,HIGH,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+90,typescript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+91,typescript,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+92,javascript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+93,javascript,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+94,javascript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,MEDIUM,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+95,javascript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+96,python,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+97,java,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,MEDIUM,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+98,javascript,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,HIGH,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+99,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+100,java,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,HIGH,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+101,python,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+102,javascript,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,HIGH,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+103,javascript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+104,typescript,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+105,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,HIGH,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+106,python,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+107,java,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,LOW,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+108,python,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+109,javascript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+110,typescript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+111,typescript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+112,python,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,HIGH,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+113,java,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,HIGH,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+114,python,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+115,java,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,MEDIUM,The react package is missing from node_modules.,Run: npm install react react-dom.
+116,python,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+117,python,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+118,javascript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+119,python,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,MEDIUM,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+120,javascript,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+121,typescript,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+122,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,HIGH,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+123,typescript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+124,python,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,HIGH,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+125,python,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+126,typescript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+127,python,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,MEDIUM,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+128,python,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+129,javascript,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+130,typescript,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+131,typescript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+132,typescript,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,MEDIUM,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+133,typescript,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+134,java,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,HIGH,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+135,javascript,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+136,java,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+137,javascript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,MEDIUM,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+138,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,HIGH,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+139,typescript,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+140,python,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+141,python,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,HIGH,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+142,java,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,MEDIUM,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+143,javascript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+144,python,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+145,javascript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+146,javascript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+147,typescript,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+148,java,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+149,python,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,MEDIUM,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+150,java,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+151,java,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+152,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,HIGH,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+153,javascript,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+154,python,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+155,python,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+156,java,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+157,java,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+158,javascript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,MEDIUM,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+159,python,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+160,java,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,MEDIUM,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+161,python,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+162,python,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+163,typescript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+164,java,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+165,java,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,MEDIUM,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+166,java,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+167,typescript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+168,java,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+169,python,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+170,typescript,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,MEDIUM,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+171,java,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+172,typescript,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+173,java,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,MEDIUM,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+174,python,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+175,typescript,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+176,python,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+177,typescript,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+178,typescript,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+179,typescript,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+180,java,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+181,java,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+182,javascript,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+183,javascript,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+184,java,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,HIGH,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+185,javascript,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,CRITICAL,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+186,java,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,CRITICAL,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+187,javascript,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+188,java,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+189,python,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,MEDIUM,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+190,typescript,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+191,javascript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+192,java,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+193,java,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,MEDIUM,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+194,python,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,MEDIUM,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+195,javascript,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+196,python,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+197,java,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,MEDIUM,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+198,typescript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+199,javascript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+200,java,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+201,python,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+202,java,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+203,java,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,HIGH,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+204,java,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,MEDIUM,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+205,typescript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+206,python,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+207,javascript,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,HIGH,The react package is missing from node_modules.,Run: npm install react react-dom.
+208,typescript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+209,javascript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,MEDIUM,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+210,javascript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+211,javascript,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+212,python,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+213,java,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,HIGH,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+214,python,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+215,python,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,MEDIUM,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+216,python,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+217,typescript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+218,typescript,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,MEDIUM,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+219,java,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+220,javascript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+221,java,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,MEDIUM,The react package is missing from node_modules.,Run: npm install react react-dom.
+222,typescript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+223,python,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,MEDIUM,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+224,java,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,MEDIUM,The react package is missing from node_modules.,Run: npm install react react-dom.
+225,python,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+226,java,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+227,javascript,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+228,python,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,HIGH,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+229,java,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,MEDIUM,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+230,typescript,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,MEDIUM,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+231,typescript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+232,python,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+233,javascript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,MEDIUM,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+234,typescript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+235,javascript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+236,java,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+237,python,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+238,javascript,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,MEDIUM,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+239,python,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+240,java,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+241,java,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,MEDIUM,The react package is missing from node_modules.,Run: npm install react react-dom.
+242,typescript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+243,javascript,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+244,python,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,MEDIUM,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+245,javascript,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+246,python,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+247,javascript,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+248,typescript,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+249,javascript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,LOW,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+250,javascript,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+251,python,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+252,java,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+253,python,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+254,javascript,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+255,javascript,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,MEDIUM,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+256,python,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,MEDIUM,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+257,javascript,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,MEDIUM,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+258,java,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,MEDIUM,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+259,typescript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,MEDIUM,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+260,java,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,HIGH,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+261,java,import { useState } from 'react';,Module not found: Error: Can't resolve 'react',Module not found: Error: Can't resolve 'react' in '/src',Import/Dependency Error,MEDIUM,The react package is missing from node_modules.,Run: npm install react react-dom.
+262,java,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+263,javascript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,MEDIUM,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+264,python,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,HIGH,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+265,java,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+266,python,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+267,javascript,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,HIGH,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+268,javascript,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+269,javascript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+270,javascript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+271,python,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+272,python,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,MEDIUM,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+273,javascript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,HIGH,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+274,python,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,MEDIUM,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+275,java,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,LOW,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+276,python,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+277,python,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,MEDIUM,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+278,typescript,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+279,javascript,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,HIGH,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+280,typescript,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,MEDIUM,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+281,javascript,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,CRITICAL,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+282,typescript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,MEDIUM,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+283,javascript,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,MEDIUM,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+284,python,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+285,java,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,HIGH,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+286,python,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,MEDIUM,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+287,typescript,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,MEDIUM,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+288,typescript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+289,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+290,typescript,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+291,java,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,MEDIUM,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+292,java,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,MEDIUM,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+293,typescript,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+294,java,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,HIGH,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+295,java,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,HIGH,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+296,java,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,CRITICAL,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+297,javascript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,HIGH,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+298,javascript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,LOW,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+299,typescript,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+300,python,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,LOW,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+301,python,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+302,typescript,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,LOW,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+303,python,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+304,python,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,MEDIUM,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+305,javascript,"def add(a, b)
+    return a + b",SyntaxError: expected ':',"File ""main.py"", line 1
+    def add(a, b)
+SyntaxError: expected ':'",Syntax Error,MEDIUM,Missing colon at the end of the function definition line.,"Add a colon after the function signature: def add(a, b):"
+306,java,"function isAdult(age) {
+  return age > 18;
+}",isAdult(18) returns false but should return true,,Logic Error,MEDIUM,Boundary condition uses '>' instead of '>=' for age 18.,Change the comparison to age >= 18.
+307,java,"import pandas as pd
+df = pd.read_csv('data.csv')",ModuleNotFoundError: No module named 'pandas',"File ""main.py"", line 1, in <module>
+ModuleNotFoundError: No module named 'pandas'",Import/Dependency Error,LOW,The pandas package is not installed in the current environment.,"Run: pip install pandas, or add it to requirements.txt."
+308,javascript,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+309,typescript,"if (x > 5 {
+  console.log('big');
+}",SyntaxError: missing ) after condition,"SyntaxError: missing ) after condition
+    at Object.compileFunction",Syntax Error,MEDIUM,The if-condition is missing a closing parenthesis.,Close the condition properly: if (x > 5) {
+310,java,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+311,typescript,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+312,python,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,MEDIUM,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+313,javascript,"conn = psycopg2.connect(host='localhost', dbname='app')",OperationalError: could not connect to server,OperationalError: could not connect to server: Connection refused,Database Error,CRITICAL,The database server is not running or the connection details are wrong.,Confirm the DB service is running and connection parameters are correct.
+314,python,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+315,python,"headers = {'Authorization': f'Bearer {token}'}
+resp = requests.get(url, headers=headers)",401 Unauthorized: Invalid or expired token,,Authentication Error,HIGH,"The auth token is missing, malformed, or has expired.",Refresh the token before the request and handle 401 by re-authenticating.
+316,typescript,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,MEDIUM,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+317,java,"response = requests.get('https://api.example.com/data')
+print(response.json())",requests.exceptions.JSONDecodeError: Expecting value,"File ""main.py"", line 2, in <module>
+JSONDecodeError: Expecting value",API Error,MEDIUM,"The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.","Check response.status_code before parsing, and verify the endpoint/auth."
+318,python,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+319,java,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,HIGH,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+320,typescript,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+321,python,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+322,java,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,HIGH,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+323,java,DEBUG = os.environ['DEBUG'],KeyError: 'DEBUG',"File ""settings.py"", line 1, in <module>
+KeyError: 'DEBUG'",Configuration Error,LOW,Required environment variable DEBUG is not set.,"Use os.environ.get('DEBUG', 'False') with a sane default."
+324,typescript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+325,python,let total = '5' * 'a';,"Result is NaN instead of throwing, causing downstream failures",,Type Error,HIGH,Multiplying a numeric string by a non-numeric string yields NaN silently.,Validate and parse inputs with Number() before arithmetic.
+326,javascript,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,CRITICAL,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+327,javascript,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+328,javascript,SELECT * FROM orders WHERE customer_id = 123,Query takes 8 seconds on a 10M row table,,Performance Error,MEDIUM,Missing index on the customer_id column causes a full table scan.,Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id).
+329,java,"x = 10
+y = 0
+print(x / y)",ZeroDivisionError: division by zero,"File ""main.py"", line 3, in <module>
+    print(x / y)
+ZeroDivisionError: division by zero",Runtime Error,HIGH,Dividing a number by a variable that is zero at runtime.,Check the denominator for zero before dividing.
+330,python,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+331,typescript,"obj = None
+obj.doSomething();",TypeError: Cannot read properties of null (reading 'doSomething'),"TypeError: Cannot read properties of null
+    at Object.<anonymous>",Runtime Error,HIGH,Calling a method on a null/undefined object reference.,Add a null check before calling obj.doSomething().
+332,javascript,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+333,java,if (user.role === 'admin') { grantAccess(); },Unauthorized users are able to access admin routes,,Authentication Error,CRITICAL,Role check is done only on the client; the server does not verify it.,Enforce role-based access control on the server/API layer as well.
+334,typescript,"arr = [1, 2, 3]
+print(arr[5])",IndexError: list index out of range,"File ""main.py"", line 2, in <module>
+    print(arr[5])
+IndexError: list index out of range",Runtime Error,MEDIUM,Accessing an index beyond the length of the list.,"Add a bounds check before indexing, e.g. if len(arr) > 5."
+335,typescript,fetch('/api/users').then(r => r.json()),TypeError: Failed to fetch,"TypeError: Failed to fetch
+    at fetchUsers",API Error,CRITICAL,"The API endpoint is unreachable, possibly due to CORS or the server being down.",Verify the server is running and CORS headers are correctly configured.
+336,python,"def is_even(n):
+    return n % 2 == 1","No exception, but is_even(4) returns False incorrectly",,Logic Error,LOW,The modulo condition is inverted; it checks for odd instead of even.,Change the condition to n % 2 == 0.
+337,javascript,DATABASE_URL = 'postgres://localhost/dev_db',Production app fails: connects to dev database instead of prod,,Configuration Error,CRITICAL,Hard-coded configuration value not overridden per environment.,Load DATABASE_URL from environment-specific config/secret manager.
+338,javascript,"for item in large_list:
+    if item in another_large_list:
+        process(item)","No crash, but function takes 40+ seconds for 100k items",,Performance Error,HIGH,"Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",Convert another_large_list to a set for O(1) average lookup time.
+339,python,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,MEDIUM,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+340,python,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,LOW,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."
+341,java,"for i in range(10)
+    print(i)",SyntaxError: expected ':',"File ""loop.py"", line 1
+SyntaxError: expected ':'",Syntax Error,LOW,The for-loop header is missing a trailing colon.,Add a colon: for i in range(10):
+342,typescript,cursor.execute('SELECT * FROM users WHERE id = ' + user_id),psycopg2.errors.SyntaxError: syntax error at or near ...,psycopg2.errors.SyntaxError: syntax error at or near,Database Error,CRITICAL,Unsanitized string concatenation used to build the SQL query.,"Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+343,java,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,MEDIUM,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+344,typescript,"age = '25'
+next_year = age + 1","TypeError: can only concatenate str (not ""int"") to str","File ""main.py"", line 2, in <module>
+TypeError: can only concatenate str (not ""int"") to str",Type Error,LOW,String value used in a numeric operation without conversion.,Convert the input to an integer: next_year = int(age) + 1.
+345,javascript,"total = 0
+for i in range(1, 10):
+    total += i
+print(total)",Output is 45 but expected sum 1..10 is 55,,Logic Error,MEDIUM,"range(1, 10) excludes 10, so the loop stops one short.","Use range(1, 11) to include 10 in the sum."

@@ -1,0 +1,342 @@
+[
+  {
+    "kb_id": "kb_001",
+    "language": "typescript",
+    "bug_type": "Performance Error",
+    "error_pattern": "No crash, but function takes 40+ seconds for 100k items",
+    "example_code": "for item in large_list:\n    if item in another_large_list:\n        process(item)",
+    "stack_trace": "",
+    "root_cause": "Using 'in' on a list results in O(n) lookup, causing O(n*m) overall complexity.",
+    "fix": "Convert another_large_list to a set for O(1) average lookup time."
+  },
+  {
+    "kb_id": "kb_002",
+    "language": "java",
+    "bug_type": "Logic Error",
+    "error_pattern": "No exception, but is_even(4) returns False incorrectly",
+    "example_code": "def is_even(n):\n    return n % 2 == 1",
+    "stack_trace": "",
+    "root_cause": "The modulo condition is inverted; it checks for odd instead of even.",
+    "fix": "Change the condition to n % 2 == 0."
+  },
+  {
+    "kb_id": "kb_003",
+    "language": "javascript",
+    "bug_type": "Performance Error",
+    "error_pattern": "Query takes 8 seconds on a 10M row table",
+    "example_code": "SELECT * FROM orders WHERE customer_id = 123",
+    "stack_trace": "",
+    "root_cause": "Missing index on the customer_id column causes a full table scan.",
+    "fix": "Add an index: CREATE INDEX idx_orders_customer_id ON orders(customer_id)."
+  },
+  {
+    "kb_id": "kb_004",
+    "language": "javascript",
+    "bug_type": "Syntax Error",
+    "error_pattern": "SyntaxError: missing ) after condition",
+    "example_code": "if (x > 5 {\n  console.log('big');\n}",
+    "stack_trace": "SyntaxError: missing ) after condition\n    at Object.compileFunction",
+    "root_cause": "The if-condition is missing a closing parenthesis.",
+    "fix": "Close the condition properly: if (x > 5) {"
+  },
+  {
+    "kb_id": "kb_005",
+    "language": "java",
+    "bug_type": "Logic Error",
+    "error_pattern": "Output is 45 but expected sum 1..10 is 55",
+    "example_code": "total = 0\nfor i in range(1, 10):\n    total += i\nprint(total)",
+    "stack_trace": "",
+    "root_cause": "range(1, 10) excludes 10, so the loop stops one short.",
+    "fix": "Use range(1, 11) to include 10 in the sum."
+  },
+  {
+    "kb_id": "kb_006",
+    "language": "javascript",
+    "bug_type": "API Error",
+    "error_pattern": "requests.exceptions.JSONDecodeError: Expecting value",
+    "example_code": "response = requests.get('https://api.example.com/data')\nprint(response.json())",
+    "stack_trace": "File \"main.py\", line 2, in <module>\nJSONDecodeError: Expecting value",
+    "root_cause": "The API returned a non-JSON (e.g. HTML error) response, likely due to a bad endpoint or auth failure.",
+    "fix": "Check response.status_code before parsing, and verify the endpoint/auth."
+  },
+  {
+    "kb_id": "kb_007",
+    "language": "typescript",
+    "bug_type": "Import/Dependency Error",
+    "error_pattern": "Module not found: Error: Can't resolve 'react'",
+    "example_code": "import { useState } from 'react';",
+    "stack_trace": "Module not found: Error: Can't resolve 'react' in '/src'",
+    "root_cause": "The react package is missing from node_modules.",
+    "fix": "Run: npm install react react-dom."
+  },
+  {
+    "kb_id": "kb_008",
+    "language": "python",
+    "bug_type": "Authentication Error",
+    "error_pattern": "401 Unauthorized: Invalid or expired token",
+    "example_code": "headers = {'Authorization': f'Bearer {token}'}\nresp = requests.get(url, headers=headers)",
+    "stack_trace": "",
+    "root_cause": "The auth token is missing, malformed, or has expired.",
+    "fix": "Refresh the token before the request and handle 401 by re-authenticating."
+  },
+  {
+    "kb_id": "kb_009",
+    "language": "typescript",
+    "bug_type": "Authentication Error",
+    "error_pattern": "Unauthorized users are able to access admin routes",
+    "example_code": "if (user.role === 'admin') { grantAccess(); }",
+    "stack_trace": "",
+    "root_cause": "Role check is done only on the client; the server does not verify it.",
+    "fix": "Enforce role-based access control on the server/API layer as well."
+  },
+  {
+    "kb_id": "kb_010",
+    "language": "javascript",
+    "bug_type": "Runtime Error",
+    "error_pattern": "ZeroDivisionError: division by zero",
+    "example_code": "x = 10\ny = 0\nprint(x / y)",
+    "stack_trace": "File \"main.py\", line 3, in <module>\n    print(x / y)\nZeroDivisionError: division by zero",
+    "root_cause": "Dividing a number by a variable that is zero at runtime.",
+    "fix": "Check the denominator for zero before dividing."
+  },
+  {
+    "kb_id": "kb_011",
+    "language": "python",
+    "bug_type": "API Error",
+    "error_pattern": "TypeError: Failed to fetch",
+    "example_code": "fetch('/api/users').then(r => r.json())",
+    "stack_trace": "TypeError: Failed to fetch\n    at fetchUsers",
+    "root_cause": "The API endpoint is unreachable, possibly due to CORS or the server being down.",
+    "fix": "Verify the server is running and CORS headers are correctly configured."
+  },
+  {
+    "kb_id": "kb_012",
+    "language": "python",
+    "bug_type": "Type Error",
+    "error_pattern": "TypeError: can only concatenate str (not \"int\") to str",
+    "example_code": "age = '25'\nnext_year = age + 1",
+    "stack_trace": "File \"main.py\", line 2, in <module>\nTypeError: can only concatenate str (not \"int\") to str",
+    "root_cause": "String value used in a numeric operation without conversion.",
+    "fix": "Convert the input to an integer: next_year = int(age) + 1."
+  },
+  {
+    "kb_id": "kb_013",
+    "language": "typescript",
+    "bug_type": "Import/Dependency Error",
+    "error_pattern": "ModuleNotFoundError: No module named 'pandas'",
+    "example_code": "import pandas as pd\ndf = pd.read_csv('data.csv')",
+    "stack_trace": "File \"main.py\", line 1, in <module>\nModuleNotFoundError: No module named 'pandas'",
+    "root_cause": "The pandas package is not installed in the current environment.",
+    "fix": "Run: pip install pandas, or add it to requirements.txt."
+  },
+  {
+    "kb_id": "kb_014",
+    "language": "java",
+    "bug_type": "Syntax Error",
+    "error_pattern": "SyntaxError: expected ':'",
+    "example_code": "def add(a, b)\n    return a + b",
+    "stack_trace": "File \"main.py\", line 1\n    def add(a, b)\nSyntaxError: expected ':'",
+    "root_cause": "Missing colon at the end of the function definition line.",
+    "fix": "Add a colon after the function signature: def add(a, b):"
+  },
+  {
+    "kb_id": "kb_015",
+    "language": "java",
+    "bug_type": "Type Error",
+    "error_pattern": "Result is NaN instead of throwing, causing downstream failures",
+    "example_code": "let total = '5' * 'a';",
+    "stack_trace": "",
+    "root_cause": "Multiplying a numeric string by a non-numeric string yields NaN silently.",
+    "fix": "Validate and parse inputs with Number() before arithmetic."
+  },
+  {
+    "kb_id": "kb_016",
+    "language": "java",
+    "bug_type": "Database Error",
+    "error_pattern": "OperationalError: could not connect to server",
+    "example_code": "conn = psycopg2.connect(host='localhost', dbname='app')",
+    "stack_trace": "OperationalError: could not connect to server: Connection refused",
+    "root_cause": "The database server is not running or the connection details are wrong.",
+    "fix": "Confirm the DB service is running and connection parameters are correct."
+  },
+  {
+    "kb_id": "kb_017",
+    "language": "typescript",
+    "bug_type": "Runtime Error",
+    "error_pattern": "IndexError: list index out of range",
+    "example_code": "arr = [1, 2, 3]\nprint(arr[5])",
+    "stack_trace": "File \"main.py\", line 2, in <module>\n    print(arr[5])\nIndexError: list index out of range",
+    "root_cause": "Accessing an index beyond the length of the list.",
+    "fix": "Add a bounds check before indexing, e.g. if len(arr) > 5."
+  },
+  {
+    "kb_id": "kb_018",
+    "language": "javascript",
+    "bug_type": "Configuration Error",
+    "error_pattern": "KeyError: 'DEBUG'",
+    "example_code": "DEBUG = os.environ['DEBUG']",
+    "stack_trace": "File \"settings.py\", line 1, in <module>\nKeyError: 'DEBUG'",
+    "root_cause": "Required environment variable DEBUG is not set.",
+    "fix": "Use os.environ.get('DEBUG', 'False') with a sane default."
+  },
+  {
+    "kb_id": "kb_019",
+    "language": "java",
+    "bug_type": "Runtime Error",
+    "error_pattern": "TypeError: Cannot read properties of null (reading 'doSomething')",
+    "example_code": "obj = None\nobj.doSomething();",
+    "stack_trace": "TypeError: Cannot read properties of null\n    at Object.<anonymous>",
+    "root_cause": "Calling a method on a null/undefined object reference.",
+    "fix": "Add a null check before calling obj.doSomething()."
+  },
+  {
+    "kb_id": "kb_020",
+    "language": "python",
+    "bug_type": "Database Error",
+    "error_pattern": "psycopg2.errors.SyntaxError: syntax error at or near ...",
+    "example_code": "cursor.execute('SELECT * FROM users WHERE id = ' + user_id)",
+    "stack_trace": "psycopg2.errors.SyntaxError: syntax error at or near",
+    "root_cause": "Unsanitized string concatenation used to build the SQL query.",
+    "fix": "Use parameterized queries: cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))."
+  },
+  {
+    "kb_id": "kb_021",
+    "language": "javascript",
+    "bug_type": "Configuration Error",
+    "error_pattern": "Production app fails: connects to dev database instead of prod",
+    "example_code": "DATABASE_URL = 'postgres://localhost/dev_db'",
+    "stack_trace": "",
+    "root_cause": "Hard-coded configuration value not overridden per environment.",
+    "fix": "Load DATABASE_URL from environment-specific config/secret manager."
+  },
+  {
+    "kb_id": "kb_022",
+    "language": "javascript",
+    "bug_type": "Logic Error",
+    "error_pattern": "isAdult(18) returns false but should return true",
+    "example_code": "function isAdult(age) {\n  return age > 18;\n}",
+    "stack_trace": "",
+    "root_cause": "Boundary condition uses '>' instead of '>=' for age 18.",
+    "fix": "Change the comparison to age >= 18."
+  },
+  {
+    "kb_id": "kb_023",
+    "language": "c",
+    "bug_type": "Runtime Error",
+    "error_pattern": "Segmentation fault (core dumped)",
+    "example_code": "int arr[3] = {1,2,3};\nprintf(\"%d\", arr[5]);",
+    "stack_trace": "",
+    "root_cause": "Reading past the end of an array (out-of-bounds access) corrupts memory and crashes.",
+    "fix": "Check the index against the array length before reading, or loop with i < length."
+  },
+  {
+    "kb_id": "kb_024",
+    "language": "c",
+    "bug_type": "Syntax Error",
+    "error_pattern": "error: expected ';' before 'return'",
+    "example_code": "int x = 5\nreturn x;",
+    "stack_trace": "",
+    "root_cause": "The statement on the previous line is missing its terminating semicolon.",
+    "fix": "Add ';' at the end of the line that precedes the reported line."
+  },
+  {
+    "kb_id": "kb_025",
+    "language": "cpp",
+    "bug_type": "Type Error",
+    "error_pattern": "error: invalid conversion from 'const char*' to 'int'",
+    "example_code": "int n = \"42\";",
+    "stack_trace": "",
+    "root_cause": "A string literal is assigned to an int variable; C++ has no implicit conversion.",
+    "fix": "Parse the text with std::stoi(\"42\") or declare the variable as std::string."
+  },
+  {
+    "kb_id": "kb_026",
+    "language": "cpp",
+    "bug_type": "Runtime Error",
+    "error_pattern": "terminate called after throwing an instance of 'std::out_of_range'",
+    "example_code": "std::vector<int> v = {1,2};\nint x = v.at(5);",
+    "stack_trace": "",
+    "root_cause": "vector::at() throws when the index is outside the container.",
+    "fix": "Validate the index (i < v.size()) or catch std::out_of_range."
+  },
+  {
+    "kb_id": "kb_027",
+    "language": "csharp",
+    "bug_type": "Runtime Error",
+    "error_pattern": "System.NullReferenceException: Object reference not set to an instance of an object",
+    "example_code": "string name = null;\nint len = name.Length;",
+    "stack_trace": "",
+    "root_cause": "A member is accessed on a null reference.",
+    "fix": "Check for null first or use the null-conditional operator: name?.Length."
+  },
+  {
+    "kb_id": "kb_028",
+    "language": "csharp",
+    "bug_type": "Type Error",
+    "error_pattern": "error CS0029: Cannot implicitly convert type 'string' to 'int'",
+    "example_code": "int age = \"25\";",
+    "stack_trace": "",
+    "root_cause": "A string value is assigned to an int variable and C# will not convert implicitly.",
+    "fix": "Use int.Parse(\"25\") / int.TryParse, or change the variable's type."
+  },
+  {
+    "kb_id": "kb_029",
+    "language": "go",
+    "bug_type": "Runtime Error",
+    "error_pattern": "panic: runtime error: index out of range [5] with length 3",
+    "example_code": "nums := []int{1,2,3}\nfmt.Println(nums[5])",
+    "stack_trace": "",
+    "root_cause": "Indexing a slice beyond its length panics at runtime.",
+    "fix": "Guard with if i < len(nums) before indexing."
+  },
+  {
+    "kb_id": "kb_030",
+    "language": "go",
+    "bug_type": "Runtime Error",
+    "error_pattern": "panic: runtime error: invalid memory address or nil pointer dereference",
+    "example_code": "var p *User\nfmt.Println(p.Name)",
+    "stack_trace": "",
+    "root_cause": "A nil pointer is dereferenced because it was never initialised.",
+    "fix": "Initialise the pointer (p := &User{}) or check p != nil before use."
+  },
+  {
+    "kb_id": "kb_031",
+    "language": "rust",
+    "bug_type": "Type Error",
+    "error_pattern": "error[E0308]: mismatched types expected `i32`, found `&str`",
+    "example_code": "let x: i32 = \"5\";",
+    "stack_trace": "",
+    "root_cause": "A string slice is assigned to an i32 - Rust never converts types implicitly.",
+    "fix": "Parse it: let x: i32 = \"5\".parse().unwrap();"
+  },
+  {
+    "kb_id": "kb_032",
+    "language": "rust",
+    "bug_type": "Runtime Error",
+    "error_pattern": "thread 'main' panicked at 'index out of bounds: the len is 3 but the index is 5'",
+    "example_code": "let v = vec![1,2,3];\nprintln!(\"{}\", v[5]);",
+    "stack_trace": "",
+    "root_cause": "Vec indexing past its length panics.",
+    "fix": "Use v.get(5) which returns an Option, or check the length first."
+  },
+  {
+    "kb_id": "kb_033",
+    "language": "php",
+    "bug_type": "Syntax Error",
+    "error_pattern": "PHP Parse error: syntax error, unexpected end of file",
+    "example_code": "<?php\nif ($x > 1) {\n  echo \"big\";",
+    "stack_trace": "",
+    "root_cause": "A block opened with '{' is never closed.",
+    "fix": "Add the missing closing '}' so every brace is balanced."
+  },
+  {
+    "kb_id": "kb_034",
+    "language": "php",
+    "bug_type": "Runtime Error",
+    "error_pattern": "Warning: Undefined array key \"email\"",
+    "example_code": "<?php\n$user = [\"name\" => \"Sam\"];\necho $user[\"email\"];",
+    "stack_trace": "",
+    "root_cause": "Reading an array key that does not exist.",
+    "fix": "Use isset($user[\"email\"]) or the null-coalescing operator: $user[\"email\"] ?? \"\"."
+  }
+]
