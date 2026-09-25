@@ -10,6 +10,12 @@ SECURITY NOTE - read this before deploying:
   can still touch the network and read files the server user can read.
   For a public deployment run this inside Docker/gVisor/Firecracker or use a
   judge service such as Judge0 or Piston instead.
+
+PISTON FALLBACK:
+  When a language's local toolchain (gcc, rustc, etc.) is not installed,
+  the runner automatically falls back to the free Piston API
+  (https://emkc.org/api/v2/piston/execute).  No API key required.
+  Set PISTON_ENABLED=false in the environment to disable this fallback.
 """
 
 import os
@@ -17,11 +23,32 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.request
+import json as _json
 
 from backend.config import RUN_TIMEOUT_SECONDS
 
 MAX_OUTPUT = 10_000
 IS_POSIX = os.name == "posix"
+
+# Set PISTON_ENABLED=false to disable the free-API fallback
+PISTON_ENABLED = os.environ.get("PISTON_ENABLED", "true").lower() not in ("false", "0", "no")
+PISTON_URL = os.environ.get("PISTON_URL", "https://emkc.org/api/v2/piston/execute")
+
+# Piston language/version mapping
+_PISTON_LANG = {
+    "python":     ("python",  "3.10.0"),
+    "javascript": ("javascript", "18.15.0"),
+    "typescript": ("typescript", "5.0.3"),
+    "java":       ("java",    "15.0.2"),
+    "c":          ("c",       "10.2.0"),
+    "cpp":        ("c++",     "10.2.0"),
+    "csharp":     ("csharp",  "6.12.0"),
+    "go":         ("go",      "1.16.2"),
+    "rust":       ("rust",    "1.50.0"),
+    "php":        ("php",     "8.2.3"),
+}
+
 
 # language -> (source filename, executables that must exist)
 _SPEC = {
@@ -54,13 +81,20 @@ def _node_supports_ts() -> bool:
 def is_available(language: str) -> bool:
     if language not in _SPEC:
         return False
+    # If local toolchain is installed, use it
+    local = False
     if language == "python":
-        return bool(sys.executable or shutil.which("python3") or shutil.which("python"))
-    if language == "csharp":
-        return bool(shutil.which("dotnet") or (shutil.which("mcs") and shutil.which("mono")))
-    if language == "typescript":
-        return _node_supports_ts()
-    return all(shutil.which(t) for t in _SPEC[language][1])
+        local = bool(sys.executable or shutil.which("python3") or shutil.which("python"))
+    elif language == "csharp":
+        local = bool(shutil.which("dotnet") or (shutil.which("mcs") and shutil.which("mono")))
+    elif language == "typescript":
+        local = _node_supports_ts()
+    else:
+        local = all(shutil.which(t) for t in _SPEC[language][1])
+    if local:
+        return True
+    # Fall back: Piston API covers this language
+    return PISTON_ENABLED and language in _PISTON_LANG
 
 
 def available_languages() -> dict:
@@ -158,15 +192,88 @@ def _prepare(language: str, code: str, workdir: str):
     return None, {"status": "unavailable", "stdout": "", "stderr": f"{language} is not supported."}
 
 
+
+def _run_via_piston(language: str, code: str, stdin: str) -> dict:
+    """
+    Execute code via the free Piston API (https://emkc.org/api/v2/piston).
+    Returns the same shape as _exec(): {status, stdout, stderr, returncode}.
+    """
+    lang_id, version = _PISTON_LANG.get(language, (language, "*"))
+    payload = _json.dumps({
+        "language": lang_id,
+        "version": version,
+        "files": [{"content": code}],
+        "stdin": stdin,
+        "run_timeout": RUN_TIMEOUT_SECONDS * 1000,
+        "compile_timeout": 30000,
+    }).encode()
+    try:
+        req = urllib.request.Request(
+            PISTON_URL,
+            data=payload,
+            headers={"Content-Type": "application/json", "User-Agent": "ai-bugfixer/1.0"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=RUN_TIMEOUT_SECONDS + 10) as resp:
+            data = _json.loads(resp.read())
+    except Exception as exc:
+        return {"status": "runtime_error", "stdout": "", "stderr": f"Piston API error: {exc}", "returncode": 1}
+
+    compile_stage = data.get("compile", {})
+    run_stage = data.get("run", {})
+
+    if compile_stage and compile_stage.get("code", 0) != 0:
+        msg = (compile_stage.get("stderr") or compile_stage.get("stdout") or "Compile error").strip()
+        return {"status": "compile_error", "stdout": "", "stderr": _trim(msg), "returncode": compile_stage.get("code", 1)}
+
+    stdout = _trim((run_stage.get("stdout") or ""))
+    stderr = _trim((run_stage.get("stderr") or ""))
+    rc = run_stage.get("code", 0)
+    if run_stage.get("signal") == "SIGKILL":
+        return {"status": "timeout", "stdout": "", "stderr": f"Time limit exceeded ({RUN_TIMEOUT_SECONDS}s). Possible infinite loop."}
+    return {
+        "status": "ok" if rc == 0 else "runtime_error",
+        "stdout": stdout,
+        "stderr": stderr,
+        "returncode": rc,
+    }
+
+
 def run_tests(language: str, code: str, tests: list[tuple[str, str]]) -> dict:
     """
     Returns {"status": ..., "compile_error": str|None, "results": [ {passed, actual, stderr, status} ... ]}
     status is 'ok' when the code compiled and every test ran (pass or fail), otherwise
     'compile_error' / 'unavailable'.
-    """
-    if not is_available(language):
-        return {"status": "unavailable", "message": f"No {language} toolchain is installed on the server.", "results": []}
 
+    When a local toolchain is not installed, falls back to the free Piston API
+    if PISTON_ENABLED=true (the default).
+    """
+    local_ok = is_available(language)
+    use_piston = not local_ok and PISTON_ENABLED and language in _PISTON_LANG
+
+    if not local_ok and not use_piston:
+        return {
+            "status": "unavailable",
+            "message": (
+                f"The {language} toolchain is not installed on this server and the Piston "
+                f"API fallback is disabled. Install {language} or set PISTON_ENABLED=true."
+            ),
+            "results": [],
+        }
+
+    if use_piston:
+        # Run all tests via Piston (one API call per test — acceptable for small test sets)
+        results = []
+        for stdin, expected in tests:
+            res = _run_via_piston(language, code, stdin + "\n")
+            if res["status"] == "compile_error":
+                return {"status": "compile_error", "message": res["stderr"], "results": []}
+            actual = res["stdout"].replace("\r\n", "\n").strip()
+            passed = res["status"] == "ok" and actual == expected.strip()
+            results.append({"passed": passed, "actual": actual, "stderr": res["stderr"], "status": res["status"]})
+        return {"status": "ok", "message": "(executed via Piston API — free remote judge)", "results": results}
+
+    # --- local execution path (unchanged) ---
     workdir = tempfile.mkdtemp(prefix="bf_run_")
     try:
         cmd, err = _prepare(language, code, workdir)
@@ -182,3 +289,4 @@ def run_tests(language: str, code: str, tests: list[tuple[str, str]]) -> dict:
         return {"status": "ok", "message": "", "results": results}
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
+

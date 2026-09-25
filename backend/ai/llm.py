@@ -114,6 +114,139 @@ def _extract_json(text: str) -> dict:
         raise
 
 
+import re as _re
+
+# ---------------------------------------------------------------------------
+# Rule-based mock fix helpers
+# ---------------------------------------------------------------------------
+
+def _mock_apply_fix(code: str, rag_hit: dict) -> str:
+    """
+    Attempt to patch `code` based on the RAG hit's bug_type / fix text so
+    the diff view shows a real change.  Covers the most common patterns in
+    the default knowledge base.  Falls back to returning code unchanged when
+    no rule fires (validator will then flag it as 'fix failed validation',
+    which is honest).
+    """
+    bug = (rag_hit.get("bug_type") or "").lower()
+    fix_hint = (rag_hit.get("fix") or "").lower()
+    err_pat = (rag_hit.get("error_pattern") or "").lower()
+
+    lines = code.splitlines()
+
+    # ---- Zero-division guard (Python / JS / TS) ---------------------------
+    if "zero" in bug or "division" in bug or "zerodivision" in err_pat:
+        new_lines = []
+        for i, ln in enumerate(lines):
+            new_lines.append(ln)
+            # Insert guard before the first return / division line
+            if _re.search(r"/\s*\w+|÷", ln) and "if" not in ln and "#" not in ln and i + 1 < len(lines):
+                # already has a guard on the previous non-empty line?
+                prev = new_lines[-2].strip() if len(new_lines) >= 2 else ""
+                if not prev.startswith("if"):
+                    # extract denominator variable
+                    m = _re.search(r"/\s*(\w+)", ln)
+                    if m:
+                        denom = m.group(1)
+                        indent = len(ln) - len(ln.lstrip())
+                        guard = " " * indent + f"if {denom} == 0:\n" + " " * indent + f"    raise ValueError('{denom} must not be zero')"
+                        new_lines.insert(-1, guard)
+        return "\n".join(new_lines)
+
+    # ---- Missing semicolon (C / C++ / Java / PHP) -------------------------
+    if "semicolon" in bug or "';'" in err_pat or "expected ';'" in err_pat or "semicol" in fix_hint:
+        new_lines = []
+        for ln in lines:
+            stripped = ln.rstrip()
+            # Skip blank, preprocessor, block openers/closers, and control-flow lines
+            if (stripped and
+                not stripped.lstrip().startswith(("#", "//", "/*", "*", "import", "package")) and
+                not stripped.rstrip().endswith(("{", "}", ";", ":")) and
+                not _re.match(r"\s*(if|else|for|while|switch|do|case|default)\b", stripped)):
+                stripped += ";"
+            new_lines.append(stripped)
+        return "\n".join(new_lines)
+
+    # ---- SQL injection / string concat (Python) ----------------------------
+    if "sql" in bug or "injection" in bug or "parameterized" in fix_hint or "parameteris" in fix_hint:
+        # Replace string concatenation in execute() calls with %s placeholders
+        patched = _re.sub(
+            r"execute\s*\(\s*(['\"].*?['\"])\s*\+\s*(\w+)\s*\)",
+            lambda m: f"execute({m.group(1).rstrip(m.group(1)[-1])} WHERE id = %s', ({m.group(2)},))",
+            code,
+        )
+        if patched != code:
+            return patched
+
+    # ---- Null / undefined property access (JS / TS) -----------------------
+    if "null" in bug or "undefined" in bug or "cannot read propert" in err_pat:
+        # Add optional chaining (?.) to member accesses
+        patched = _re.sub(r"(\w+)\.(\w+)\.(\w+)", r"\1?.\2?.\3", code)
+        if patched != code:
+            return patched
+
+    # ---- Off-by-one / index out of range -----------------------------------
+    if "index" in bug and ("range" in bug or "bounds" in bug):
+        # Replace arr[i] where i could be len/length with arr[i-1]
+        patched = _re.sub(r"\[(\s*len\s*\(\s*\w+\s*\)\s*)\]", r"[\1 - 1]", code)
+        patched = _re.sub(r"\[(\s*\w+\.length\s*)\]", r"[\1 - 1]", patched)
+        if patched != code:
+            return patched
+
+    # ---- Unclosed parenthesis / bracket ------------------------------------
+    if "unclosed" in bug or "paren" in bug or "bracket" in bug or "never closed" in err_pat:
+        # Count and balance brackets
+        opens = sum(code.count(c) for c in "([{")
+        closes = sum(code.count(c) for c in ")]}")
+        if opens > closes:
+            closing = ")" * (code.count("(") - code.count(")"))
+            closing += "]" * (code.count("[") - code.count("]"))
+            closing += "}" * (code.count("{") - code.count("}"))
+            return code.rstrip() + closing
+        return code
+
+    # ---- No rule fired — return original so validator shows honest status --
+    return code
+
+
+def _mock_detect_error_lines(code: str, rag_hit: dict) -> list:
+    """
+    Heuristically identify the most likely offending line(s) from the code
+    based on the RAG hit's error_pattern / bug_type.
+    Returns a list of {line, text, reason} dicts (same format as LLM output).
+    """
+    bug = (rag_hit.get("bug_type") or "").lower()
+    err_pat = (rag_hit.get("error_pattern") or "").lower()
+    reason = rag_hit.get("root_cause", "Potential bug location based on error pattern.")
+    lines = code.splitlines()
+    hits = []
+
+    patterns = []
+    if "zero" in bug or "division" in bug:
+        patterns.append(_re.compile(r"/\s*\w+"))
+    if "semicolon" in bug or "';'" in err_pat:
+        patterns.append(_re.compile(r"\w.*[^;{}\s]$"))
+    if "sql" in bug or "injection" in bug:
+        patterns.append(_re.compile(r"execute\s*\(.*\+"))
+    if "null" in bug or "undefined" in bug:
+        patterns.append(_re.compile(r"\w+\.\w+\.\w+"))
+    if "index" in bug:
+        patterns.append(_re.compile(r"\[.*len\b|\.length\b"))
+
+    for i, ln in enumerate(lines, start=1):
+        stripped = ln.lstrip()
+        if stripped.startswith(("//", "#", "/*", "*")):
+            continue
+        for pat in patterns:
+            if pat.search(ln):
+                hits.append({"line": i, "text": ln, "reason": reason})
+                break
+        if hits:
+            break  # return first match only for brevity
+
+    return hits
+
+
 class CodingLLM:
     def __init__(self, backend: str = LLM_BACKEND):
         self.backend = backend
@@ -151,12 +284,16 @@ class CodingLLM:
     def _call_mock(self, prompt: str, rag_hits: list, code: str) -> str:
         """
         No real LLM configured — best-effort demo response built directly
-        from the top RAG match, so the pipeline still returns something
-        useful with zero setup. Set LLM_BACKEND=ollama or =api and
-        configure a real model for genuine LLM-generated fixes.
+        from the top RAG match.  We now attempt to apply a rule-based patch
+        to the code so the Fix/diff tab shows a real change instead of
+        "No code changes were suggested."
+
+        Set LLM_BACKEND=ollama or =api for genuine LLM-generated fixes.
         """
         if rag_hits:
             top = rag_hits[0]
+            corrected = _mock_apply_fix(code, top)
+            error_lines = _mock_detect_error_lines(code, top)
             return json.dumps(
                 {
                     "root_cause": top["root_cause"],
@@ -166,15 +303,19 @@ class CodingLLM:
                         f"the closest known fix rather than a freshly generated one."
                     ),
                     "fix": top["fix"],
-                    "corrected_code": code,
-                    "error_lines": [],
+                    "corrected_code": corrected,
+                    "error_lines": error_lines,
                 }
             )
         return json.dumps(
             {
                 "root_cause": "No similar known bug found and no live LLM is configured.",
-                "explanation": "Set LLM_BACKEND=ollama or LLM_BACKEND=api with a real model to get a generated fix.",
-                "fix": "",
+                "explanation": (
+                    "Set LLM_BACKEND=ollama or LLM_BACKEND=api with a real model to get a "
+                    "generated fix. Alternatively, paste the exact error message for a better "
+                    "RAG match from the knowledge base."
+                ),
+                "fix": "Configure a real LLM backend (see .env LLM_BACKEND setting) for automatic code fixes.",
                 "corrected_code": code,
                 "error_lines": [],
             }

@@ -97,7 +97,7 @@ export default function PracticeProblemPage() {
           <section className="space-y-4 slide-up" style={{ "--i": 1 }}>
             <div className="glass p-5 space-y-4">
               <LanguagePicker value={language} onChange={setLanguage} disabledIds={Object.keys(runnable).filter((k) => runnable[k] === false)} hint={Object.fromEntries(Object.keys(runnable).filter((k) => runnable[k] === false).map((k) => [k, "Compiler/runtime not installed on the server"]))} />
-              {notRunnable && <p className="text-xs rounded-lg px-3 py-2" style={{ color: "#fde68a", background: "rgb(251 191 36 / .1)", border: "1px solid rgb(251 191 36 / .3)" }}>The {language} toolchain isn't installed on this server, so code can't be run here. Install it (see README) or pick another language.</p>}
+              {notRunnable && <p className="text-xs rounded-lg px-3 py-2" style={{ color: "#fde68a", background: "rgb(251 191 36 / .1)", border: "1px solid rgb(251 191 36 / .3)" }}>The {language} toolchain isn't installed on this server. Install it (see README) or pick another language.</p>}
               <CodeEditor label="Your solution" value={code} onChange={setCode} rows={14} />
               <div className="flex flex-wrap gap-2">
                 <button onClick={() => exec("run")} disabled={!!busy || notRunnable || !code.trim()} className="btn btn-ghost">
